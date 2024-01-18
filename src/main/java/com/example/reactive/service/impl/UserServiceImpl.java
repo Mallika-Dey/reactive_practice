@@ -23,10 +23,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<User> createUser(UserDto userDto) {
-        return  userRepository.save(User
-                .builder()
-                .name(userDto.getName())
-                .age(userDto.getAge())
-                .build());
+        try {
+            return userRepository.save(
+                    User
+                            .builder()
+                            .name(userDto.getName())
+                            .age(userDto.getAge())
+                            .build()
+            );
+        } catch (Exception ex) {
+            logger.error(ex, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Mono<User> updateUser(UserDto userDto, Integer id) {
+        return userRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("not found")))
+                .flatMap(user ->
+                        userRepository.save(User
+                                .builder()
+                                .id(id)
+                                .name(userDto.getName())
+                                .age(userDto.getAge())
+                                .build()));
     }
 }

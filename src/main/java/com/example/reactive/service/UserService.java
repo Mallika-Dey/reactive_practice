@@ -13,4 +13,7 @@ public interface UserService {
     Flux<User> getUserByAge(Integer age);
 
     Mono<User> createUser(UserDto userDto);
+
+    Mono<User> updateUser(UserDto userDto, Integer id);
+
 }
