@@ -16,4 +16,6 @@ public interface UserService {
 
     Mono<User> updateUser(UserDto userDto, Integer id);
 
+    Mono<Void> deleteUser(Integer id);
+
 }

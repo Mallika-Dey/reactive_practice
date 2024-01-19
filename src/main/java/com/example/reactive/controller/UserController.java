@@ -28,4 +28,9 @@ public class UserController {
     public Mono<User> updateUser(@RequestBody UserDto userDto, @PathVariable Integer id) {
         return userService.updateUser(userDto, id);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public Mono<Void> deleteUser(@PathVariable Integer id) {
+        return userService.deleteUser(id);
+    }
 }

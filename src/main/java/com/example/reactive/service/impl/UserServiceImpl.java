@@ -2,6 +2,7 @@ package com.example.reactive.service.impl;
 
 import com.example.reactive.dto.UserDto;
 import com.example.reactive.entity.User;
+import com.example.reactive.exception.NotFoundException;
 import com.example.reactive.repositories.UserRepository;
 import com.example.reactive.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,24 +18,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<User> getUserByAge(Integer age) {
-        return userRepository.findByAge(age);
+//        return userRepository
+//                .findByAge(age)
+//                .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
+
+        return userRepository.findByAge(age)
+                .onErrorResume(ex -> {
+                    logger.error(ex, ex);
+                    return Mono.empty();
+                })
+                .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
+
     }
 
     @Transactional
     @Override
     public Mono<User> createUser(UserDto userDto) {
-        try {
-            return userRepository.save(
-                    User
-                            .builder()
-                            .name(userDto.getName())
-                            .age(userDto.getAge())
-                            .build()
-            );
-        } catch (Exception ex) {
-            logger.error(ex, ex);
-        }
-        return null;
+        return userRepository.save(User
+                        .builder()
+                        .name(userDto.getName())
+                        .age(userDto.getAge())
+                        .build())
+                .doOnSuccess(
+                        user ->
+                                logger.info("Student with ID {} created successfully " + user))
+                .onErrorMap(throwable -> {
+                    logger.error("Error creating user", throwable);
+                    return new RuntimeException("Failed to create user", throwable);
+                });
     }
 
     @Override
@@ -49,4 +60,18 @@ public class UserServiceImpl implements UserService {
                                 .age(userDto.getAge())
                                 .build()));
     }
+
+    @Override
+    public Mono<Void> deleteUser(Integer id) {
+        return userRepository.deleteById(id)
+                .doOnSuccess(
+                        user -> logger.info("successfully deleted " + id)
+                )
+                .onErrorResume(ex -> {
+                            logger.error("failed " + ex);
+                            return Mono.empty();
+                        }
+                );
+    }
+
 }
