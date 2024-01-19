@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -21,6 +20,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByAge(age);
     }
 
+    @Transactional
     @Override
     public Mono<User> createUser(UserDto userDto) {
         try {
