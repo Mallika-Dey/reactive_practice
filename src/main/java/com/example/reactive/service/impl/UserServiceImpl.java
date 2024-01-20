@@ -18,17 +18,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Flux<User> getUserByAge(Integer age) {
-//        return userRepository
-//                .findByAge(age)
-//                .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
-
-        return userRepository.findByAge(age)
-                .onErrorResume(ex -> {
-                    logger.error(ex, ex);
-                    return Mono.empty();
-                })
+        return userRepository
+                .findByAge(age)
                 .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
-
     }
 
     @Transactional
