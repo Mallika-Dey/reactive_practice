@@ -6,6 +6,7 @@ import com.example.reactive.exception.NotFoundException;
 import com.example.reactive.repositories.UserRepository;
 import com.example.reactive.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -21,6 +22,10 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findByAge(age)
                 .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
+//                .onErrorResume(throwable -> {
+//                    logger.error(throwable, throwable);
+//                    return Mono.just(new User());
+//                });
     }
 
     @Transactional
@@ -64,6 +69,21 @@ public class UserServiceImpl implements UserService {
                             return Mono.empty();
                         }
                 );
+    }
+
+    @Override
+    public Flux<UserDto> getFilterUser(Integer age) {
+        return getUserByAge(age)
+                .flatMap(this::userToDto)
+                .switchIfEmpty(Mono.error(new NotFoundException("not exists")));
+    }
+
+    private Mono<UserDto> userToDto(User user) {
+        return Mono.just(UserDto
+                .builder()
+                .name(user.getName())
+                .age(user.getAge())
+                .build());
     }
 
 }

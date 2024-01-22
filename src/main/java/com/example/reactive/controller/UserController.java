@@ -19,6 +19,11 @@ public class UserController {
         return userService.getUserByAge(age);
     }
 
+    @GetMapping("/get/user/age/{age}")
+    public Flux<UserDto> getAllUserDtoByAge(@PathVariable Integer age) {
+        return userService.getFilterUser(age);
+    }
+
     @PostMapping("/create")
     public Mono<User> createUser(@RequestBody UserDto userDto) {
         return userService.createUser(userDto);

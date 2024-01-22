@@ -18,4 +18,6 @@ public interface UserService {
 
     Mono<Void> deleteUser(Integer id);
 
+    Flux<UserDto> getFilterUser(Integer age);
+
 }

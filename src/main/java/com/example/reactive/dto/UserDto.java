@@ -1,10 +1,9 @@
 package com.example.reactive.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
