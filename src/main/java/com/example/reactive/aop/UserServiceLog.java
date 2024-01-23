@@ -47,14 +47,4 @@ public class UserServiceLog {
 //        }
 //    }
 
-    @Before("execution(* com.example.reactive.service.*.*(..))")
-    @Async
-    public void logBeforeMethodExecution(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
-
-        // Log method name and arguments
-        System.out.println("Method: " + methodName);
-    }
-
 }

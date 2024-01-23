@@ -6,7 +6,6 @@ import com.example.reactive.exception.NotFoundException;
 import com.example.reactive.repositories.UserRepository;
 import com.example.reactive.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -31,6 +30,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Mono<User> createUser(UserDto userDto) {
+        if (userDto == null || userDto.getAge() == null || userDto.getName() == null) {
+            throw new NullPointerException("user input can't be null");
+        }
+
         return userRepository.save(User
                         .builder()
                         .name(userDto.getName())
